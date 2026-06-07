@@ -1,9 +1,6 @@
 const userService = require("../services/services");
 
-/**
- * Create User
- * POST /api/users
- */
+
 const createUser = async (req, res) => {
   try {
     const user = await userService.createUser(req.body);
@@ -21,10 +18,7 @@ const createUser = async (req, res) => {
   }
 };
 
-/**
- * Get User By Id
- * GET /api/users/:id
- */
+
 const getUserById = async (req, res) => {
   try {
     const user = await userService.findUserById(req.params.id);
@@ -48,10 +42,7 @@ const getUserById = async (req, res) => {
   }
 };
 
-/**
- * Get All Users
- * GET /api/users
- */
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await userService.getAllUsers();
@@ -69,10 +60,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-/**
- * Update User
- * PUT /api/users/:id
- */
+
 const updateUser = async (req, res) => {
   try {
     const user = await userService.updateUser(
@@ -100,10 +88,7 @@ const updateUser = async (req, res) => {
   }
 };
 
-/**
- * Delete User
- * DELETE /api/users/:id
- */
+
 const deleteUser = async (req, res) => {
   try {
     const user = await userService.deleteUser(req.params.id);
