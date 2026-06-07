@@ -1,6 +1,6 @@
 # Task Manager
 
-A full-stack task management application with user authentication, task CRUD, search, and filtering.
+Task Management Web Application built with the MERN stack featuring JWT authentication, task CRUD operations, status tracking, search, filtering, and secure user management.
 
 ## Features
 
@@ -49,8 +49,8 @@ TODO/
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
-cd TODO
+git clone https://github.com/Nitish-Maddy/Task-Manager.git
+cd Task-Manager
 ```
 
 ### 2. Backend setup
