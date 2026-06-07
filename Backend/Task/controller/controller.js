@@ -1,9 +1,6 @@
 const taskService = require("../services/services");
 
-/**
- * Create Task
- * POST /api/tasks
- */
+
 const createTask = async (req, res) => {
   try {
     const task = await taskService.createTask(req.body);
@@ -21,10 +18,7 @@ const createTask = async (req, res) => {
   }
 };
 
-/**
- * Get Task By Id
- * GET /api/tasks/:id
- */
+
 const getTaskById = async (req, res) => {
   try {
     const task = await taskService.getTaskById(req.params.id);
@@ -48,10 +42,7 @@ const getTaskById = async (req, res) => {
   }
 };
 
-/**
- * Get All Tasks
- * GET /api/tasks
- */
+
 const getAllTasks = async (req, res) => {
   try {
     const tasks = await taskService.getAllTasks();
@@ -69,10 +60,7 @@ const getAllTasks = async (req, res) => {
   }
 };
 
-/**
- * Get Tasks By User Id
- * GET /api/tasks/user/:userId
- */
+
 const getTasksByUserId = async (req, res) => {
   try {
     const tasks = await taskService.getTasksByUserId(
@@ -92,10 +80,7 @@ const getTasksByUserId = async (req, res) => {
   }
 };
 
-/**
- * Update Task
- * PUT /api/tasks/:id
- */
+
 const updateTask = async (req, res) => {
   try {
     const task = await taskService.updateTask(
@@ -123,10 +108,7 @@ const updateTask = async (req, res) => {
   }
 };
 
-/**
- * Delete Task
- * DELETE /api/tasks/:id
- */
+
 const deleteTask = async (req, res) => {
   try {
     const task = await taskService.deleteTask(req.params.id);
@@ -150,10 +132,7 @@ const deleteTask = async (req, res) => {
   }
 };
 
-/**
- * Toggle Task Status
- * PATCH /api/tasks/:id/status
- */
+
 const toggleTaskStatus = async (req, res) => {
   try {
     const task = await taskService.toggleTaskStatus(
@@ -173,10 +152,7 @@ const toggleTaskStatus = async (req, res) => {
   }
 };
 
-/**
- * Search Tasks
- * GET /api/tasks/search?keyword=react&userId=123
- */
+
 const searchTasks = async (req, res) => {
   try {
     const { keyword, userId } = req.query;
@@ -199,10 +175,7 @@ const searchTasks = async (req, res) => {
   }
 };
 
-/**
- * Filter Tasks By Status
- * GET /api/tasks/status/:status?userId=123
- */
+
 const filterTasksByStatus = async (req, res) => {
   try {
     const { userId } = req.query;
@@ -226,10 +199,7 @@ const filterTasksByStatus = async (req, res) => {
   }
 };
 
-/**
- * Filter Tasks By Priority
- * GET /api/tasks/priority/:priority?userId=123
- */
+
 const filterTasksByPriority = async (req, res) => {
   try {
     const { userId } = req.query;
