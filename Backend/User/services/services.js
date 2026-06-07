@@ -1,8 +1,6 @@
 const User = require("../model/model");
 
-/**
- * Create User
- */
+
 const createUser = async (userData) => {
   const { name, email, password } = userData;
 
@@ -21,30 +19,22 @@ const createUser = async (userData) => {
   return user;
 };
 
-/**
- * Find User By Email
- */
+
 const findUserByEmail = async (email) => {
   return await User.findOne({ email }).select("+password");
 };
 
-/**
- * Find User By Id
- */
+
 const findUserById = async (userId) => {
   return await User.findById(userId);
 };
 
-/**
- * Get All Users
- */
+
 const getAllUsers = async () => {
   return await User.find().select("-password");
 };
 
-/**
- * Update User
- */
+
 const updateUser = async (userId, updateData) => {
   return await User.findByIdAndUpdate(
     userId,
@@ -56,9 +46,7 @@ const updateUser = async (userId, updateData) => {
   ).select("-password");
 };
 
-/**
- * Delete User
- */
+
 const deleteUser = async (userId) => {
   return await User.findByIdAndDelete(userId);
 };
