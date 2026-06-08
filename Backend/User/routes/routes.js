@@ -1,4 +1,5 @@
 const express = require("express");
+const authMiddleware = require("../../auth/middleware/auth.middleware");
 const {
   createUser,
   getUserById,
@@ -8,6 +9,8 @@ const {
 } = require("../controller/controller");
 
 const router = express.Router();
+
+router.use(authMiddleware);
 
 router.post("/", createUser);
 router.get("/", getAllUsers);

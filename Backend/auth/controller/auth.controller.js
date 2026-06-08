@@ -1,9 +1,7 @@
 const authService = require("../services/auth.services");
 const jwt = require("jsonwebtoken");
 
-/**
- * Generate JWT Token
- */
+
 const generateToken = (userId) => {
   return jwt.sign(
     { id: userId },
@@ -14,10 +12,7 @@ const generateToken = (userId) => {
   );
 };
 
-/**
- * Register User
- * POST /api/auth/register
- */
+
 const register = async (req, res) => {
   try {
     const user = await authService.registerUser(req.body);
@@ -42,10 +37,7 @@ const register = async (req, res) => {
   }
 };
 
-/**
- * Login User
- * POST /api/auth/login
- */
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -75,10 +67,7 @@ const login = async (req, res) => {
   }
 };
 
-/**
- * Get Profile
- * GET /api/auth/profile
- */
+
 const getProfile = async (req, res) => {
   try {
     const user = await authService.getUserProfile(

@@ -1,9 +1,18 @@
 const taskService = require("../services/services");
 
+const getUserId = (req) => req.user._id.toString();
+
+const isTaskOwner = (task, userId) => {
+  const ownerId = task.userId._id || task.userId;
+  return ownerId.toString() === userId;
+};
 
 const createTask = async (req, res) => {
   try {
-    const task = await taskService.createTask(req.body);
+    const task = await taskService.createTask({
+      ...req.body,
+      userId: req.user._id,
+    });
 
     res.status(201).json({
       success: true,
@@ -18,7 +27,6 @@ const createTask = async (req, res) => {
   }
 };
 
-
 const getTaskById = async (req, res) => {
   try {
     const task = await taskService.getTaskById(req.params.id);
@@ -27,6 +35,13 @@ const getTaskById = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Task not found",
+      });
+    }
+
+    if (!isTaskOwner(task, getUserId(req))) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to access this task",
       });
     }
 
@@ -42,10 +57,9 @@ const getTaskById = async (req, res) => {
   }
 };
 
-
 const getAllTasks = async (req, res) => {
   try {
-    const tasks = await taskService.getAllTasks();
+    const tasks = await taskService.getTasksByUserId(req.user._id);
 
     res.status(200).json({
       success: true,
@@ -59,13 +73,17 @@ const getAllTasks = async (req, res) => {
     });
   }
 };
-
 
 const getTasksByUserId = async (req, res) => {
   try {
-    const tasks = await taskService.getTasksByUserId(
-      req.params.userId
-    );
+    if (req.params.userId !== getUserId(req)) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to access these tasks",
+      });
+    }
+
+    const tasks = await taskService.getTasksByUserId(req.user._id);
 
     res.status(200).json({
       success: true,
@@ -80,20 +98,26 @@ const getTasksByUserId = async (req, res) => {
   }
 };
 
-
 const updateTask = async (req, res) => {
   try {
-    const task = await taskService.updateTask(
-      req.params.id,
-      req.body
-    );
+    const existing = await taskService.getTaskById(req.params.id);
 
-    if (!task) {
+    if (!existing) {
       return res.status(404).json({
         success: false,
         message: "Task not found",
       });
     }
+
+    if (!isTaskOwner(existing, getUserId(req))) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to update this task",
+      });
+    }
+
+    const { userId, ...updateData } = req.body;
+    const task = await taskService.updateTask(req.params.id, updateData);
 
     res.status(200).json({
       success: true,
@@ -108,17 +132,25 @@ const updateTask = async (req, res) => {
   }
 };
 
-
 const deleteTask = async (req, res) => {
   try {
-    const task = await taskService.deleteTask(req.params.id);
+    const existing = await taskService.getTaskById(req.params.id);
 
-    if (!task) {
+    if (!existing) {
       return res.status(404).json({
         success: false,
         message: "Task not found",
       });
     }
+
+    if (!isTaskOwner(existing, getUserId(req))) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to delete this task",
+      });
+    }
+
+    await taskService.deleteTask(req.params.id);
 
     res.status(200).json({
       success: true,
@@ -132,12 +164,25 @@ const deleteTask = async (req, res) => {
   }
 };
 
-
 const toggleTaskStatus = async (req, res) => {
   try {
-    const task = await taskService.toggleTaskStatus(
-      req.params.id
-    );
+    const existing = await taskService.getTaskById(req.params.id);
+
+    if (!existing) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    if (!isTaskOwner(existing, getUserId(req))) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to update this task",
+      });
+    }
+
+    const task = await taskService.toggleTaskStatus(req.params.id);
 
     res.status(200).json({
       success: true,
@@ -152,14 +197,13 @@ const toggleTaskStatus = async (req, res) => {
   }
 };
 
-
 const searchTasks = async (req, res) => {
   try {
-    const { keyword, userId } = req.query;
+    const { keyword } = req.query;
 
     const tasks = await taskService.searchTasks(
       keyword,
-      userId
+      req.user._id
     );
 
     res.status(200).json({
@@ -175,14 +219,12 @@ const searchTasks = async (req, res) => {
   }
 };
 
-
 const filterTasksByStatus = async (req, res) => {
   try {
-    const { userId } = req.query;
     const { status } = req.params;
 
     const tasks = await taskService.filterTasksByStatus(
-      userId,
+      req.user._id,
       status
     );
 
@@ -199,14 +241,12 @@ const filterTasksByStatus = async (req, res) => {
   }
 };
 
-
 const filterTasksByPriority = async (req, res) => {
   try {
-    const { userId } = req.query;
     const { priority } = req.params;
 
     const tasks = await taskService.filterTasksByPriority(
-      userId,
+      req.user._id,
       priority
     );
 

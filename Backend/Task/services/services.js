@@ -18,16 +18,12 @@ const getAllTasks = async () => {
     .sort({ createdAt: -1 });
 };
 
-
 const getTasksByUserId = async (userId) => {
   return await Task.find({ userId }).sort({
     createdAt: -1,
   });
 };
 
-/**
- * Update Task
- */
 const updateTask = async (taskId, updateData) => {
   return await Task.findByIdAndUpdate(
     taskId,
@@ -39,11 +35,9 @@ const updateTask = async (taskId, updateData) => {
   );
 };
 
-
 const deleteTask = async (taskId) => {
   return await Task.findByIdAndDelete(taskId);
 };
-
 
 const toggleTaskStatus = async (taskId) => {
   const task = await Task.findById(taskId);
@@ -62,7 +56,6 @@ const toggleTaskStatus = async (taskId) => {
   return task;
 };
 
-
 const searchTasks = async (keyword, userId) => {
   return await Task.find({
     userId,
@@ -72,7 +65,6 @@ const searchTasks = async (keyword, userId) => {
     ],
   });
 };
-
 
 const filterTasksByStatus = async (
   userId,

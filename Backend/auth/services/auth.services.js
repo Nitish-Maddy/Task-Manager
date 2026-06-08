@@ -13,9 +13,7 @@ const generateToken = (userId) => {
     }
   );
 };
-/**
- * Register User
- */
+
 const registerUser = async (userData) => {
   const { name, email, password } = userData;
 
@@ -34,9 +32,7 @@ const registerUser = async (userData) => {
   return user;
 };
 
-/**
- * Login User
- */
+
 const loginUser = async (email, password) => {
   const user = await User.findOne({ email }).select("+password");
 
@@ -53,9 +49,7 @@ const loginUser = async (email, password) => {
   return user;
 };
 
-/**
- * Get User Profile
- */
+
 const getUserProfile = async (userId) => {
   const user = await User.findById(userId);
 
