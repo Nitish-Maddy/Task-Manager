@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
+  const [showCompleted, setShowCompleted] = useState(true);
 
   const userId = user.id || user._id;
 
@@ -47,6 +48,9 @@ export default function Dashboard() {
     fetchTasks();
   }, [fetchTasks]);
 
+  const pendingTasks = tasks.filter((task) => task.status === "Pending");
+  const completedTasks = tasks.filter((task) => task.status === "Completed");
+
   const handleCreate = async (taskData) => {
     await tasksApi.createTask({ ...taskData, userId });
     setShowForm(false);
@@ -60,8 +64,23 @@ export default function Dashboard() {
   };
 
   const handleToggle = async (id) => {
-    await tasksApi.toggleTaskStatus(id);
-    fetchTasks();
+    setTasks((prev) =>
+      prev.map((task) =>
+        task._id === id
+          ? {
+              ...task,
+              status: task.status === "Pending" ? "Completed" : "Pending",
+            }
+          : task
+      )
+    );
+
+    try {
+      await tasksApi.toggleTaskStatus(id);
+    } catch (err) {
+      setError(err.message);
+      fetchTasks();
+    }
   };
 
   const handleDelete = async (id) => {
@@ -78,15 +97,35 @@ export default function Dashboard() {
 
   const hasFilters = search || statusFilter || priorityFilter;
 
+  const renderTaskGrid = (taskList) => (
+    <div className="task-grid">
+      {taskList.map((task) => (
+        <TaskCard
+          key={task._id}
+          task={task}
+          onToggle={handleToggle}
+          onEdit={setEditingTask}
+          onDelete={handleDelete}
+        />
+      ))}
+    </div>
+  );
+
   return (
     <Layout>
       <div className="dashboard">
         <div className="dashboard-header">
           <div>
             <h1>My Tasks</h1>
-            <p className="subtitle">
-              {tasks.length} task{tasks.length !== 1 ? "s" : ""}
-            </p>
+            <div className="task-stats">
+              <span className="stat stat-pending">
+                {pendingTasks.length} pending
+              </span>
+              <span className="stat-divider">·</span>
+              <span className="stat stat-completed">
+                {completedTasks.length} completed
+              </span>
+            </div>
           </div>
           <button
             className="btn btn-primary"
@@ -182,16 +221,37 @@ export default function Dashboard() {
             )}
           </div>
         ) : (
-          <div className="task-grid">
-            {tasks.map((task) => (
-              <TaskCard
-                key={task._id}
-                task={task}
-                onToggle={handleToggle}
-                onEdit={setEditingTask}
-                onDelete={handleDelete}
-              />
-            ))}
+          <div className="task-sections">
+            {pendingTasks.length > 0 && (
+              <section className="task-section">
+                <h2 className="section-title">
+                  To Do
+                  <span className="section-count">{pendingTasks.length}</span>
+                </h2>
+                {renderTaskGrid(pendingTasks)}
+              </section>
+            )}
+
+            {completedTasks.length > 0 && (
+              <section className="task-section task-section-completed">
+                <button
+                  type="button"
+                  className="section-title section-toggle"
+                  onClick={() => setShowCompleted((prev) => !prev)}
+                >
+                  Completed
+                  <span className="section-count">{completedTasks.length}</span>
+                  <span className="toggle-icon">{showCompleted ? "▾" : "▸"}</span>
+                </button>
+                {showCompleted && renderTaskGrid(completedTasks)}
+              </section>
+            )}
+
+            {pendingTasks.length === 0 && completedTasks.length > 0 && (
+              <div className="all-done">
+                <p>All tasks completed — great work!</p>
+              </div>
+            )}
           </div>
         )}
       </div>
